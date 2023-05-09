@@ -5,6 +5,8 @@ import cors from '@koa/cors'
 import bodyParser from 'koa-bodyparser'
 import { createServer } from 'http'
 import { staticRouter } from './routes/static'
+import { config } from './config/config'
+import { unprotectedRouter } from './routes/unprotected'
 
 
 export const server = function (): Server {
@@ -22,9 +24,10 @@ export const server = function (): Server {
 
     app.use(staticRouter.routes()).use(staticRouter.allowedMethods())
 
-    console.log(`Server running on port 3000`)
+    app.use(unprotectedRouter.routes()).use(unprotectedRouter.allowedMethods())
+    console.log(`Server running on port ${config.port}`)
 
-    return createServer(app.callback()).listen(3000)
+    return createServer(app.callback()).listen(config.port)
 }
 
 server()
