@@ -10,7 +10,7 @@ unprotectedRouter.get('refresh')
 
 
 // User
-unprotectedRouter.post('/users')
+unprotectedRouter.post('/users',user.createUser)
 
 
 
