@@ -1,9 +1,10 @@
 import { config } from "../config/config";
 import { DataSource } from "typeorm";
 
+let appDataSource: DataSource;
 export async function setupConnection(drop: boolean = false): Promise<DataSource> {
 
-    const AppDataSource = new DataSource({
+    appDataSource = new DataSource({
         type: 'mongodb',
         host: config.dbHost,
         port: config.dbPort,
@@ -14,5 +15,8 @@ export async function setupConnection(drop: boolean = false): Promise<DataSource
         entities: config.dbEntitiesPath
     })
 
-    return AppDataSource.initialize()
+    return appDataSource.initialize()
 }
+
+
+export {appDataSource}
