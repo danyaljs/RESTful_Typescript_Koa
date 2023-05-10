@@ -1,26 +1,27 @@
-import dotenv from 'dotenv'
-import { IConfig, IJwtSecret, IRedisConnDetails } from '../interfaces/config.interface'
+import { validateEnv } from './dotenv';
+import { IConfig, IRedisConnDetails } from '../interfaces/config.interface'
 import { REDIS_BLACKLIST_KEYNAME } from './redis.constant';
 
-
-dotenv.config({ path: '.env' })
+validateEnv()
 
 // mongo
 const isTestMode = process.env.NODE_ENV === 'test',
-    isDevelopmentMode = process.env.NODE_ENV === 'development',
-    databaseUrl = process.env.DATABASE_URL || 'mongodb://localhost:27017/apidb';
+    isDevelopmentMode = process.env.NODE_ENV === 'development'
 
 // redis defaults
 const redis: IRedisConnDetails = {
-    host: process.env.REDIS_HOST || '127.0.0.1',
-    port: +process.env.REDIS_PORT || 6379,
+    host: process.env.REDIS_HOST,
+    port: +process.env.REDIS_PORT,
     blackListEnabled: !!process.env.REDIS_BLACKLIST_ENABLED || isTestMode,
     blackListKeyName: REDIS_BLACKLIST_KEYNAME
 }
 
 const config: IConfig = {
-    nodeEnv: process.env.NODE_ENV || 'development',
-    port: + (process.env.PORT || 3000),
+    nodeEnv: process.env.NODE_ENV,
+    dbPort: +process.env.DB_PORT,
+    dbHost: process.env.DB_HOST,
+    dbName: process.env.DB_NAME,
+    apiPort: + process.env.API_PORT,
     debugLoggin: isDevelopmentMode,
     jwt: {
         accessTokenSecret: process.env.JWT_ACCESS_TOKEN_SECRET || 'sec-code-123!.',
@@ -29,7 +30,6 @@ const config: IConfig = {
         refreshTokenLife: process.env.JWT_REFRESH_TOKEN_LIFE || '24h'
     },
     redis,
-    databaseUrl,
     dbEntitiesPath: [...(isDevelopmentMode || isTestMode ? ['src/entities/**/*.ts'] : ['dist/entities/**/*.js'])],
 }
 
