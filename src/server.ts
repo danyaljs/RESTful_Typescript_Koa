@@ -7,7 +7,7 @@ import { createServer } from 'http'
 import { staticRouter } from './routes/static'
 import { config } from './config/config'
 import { unprotectedRouter } from './routes/unprotected'
-
+import { setupConnection } from './providers/connections'
 
 export const server = function (): Server {
 
@@ -25,9 +25,14 @@ export const server = function (): Server {
     app.use(staticRouter.routes()).use(staticRouter.allowedMethods())
 
     app.use(unprotectedRouter.routes()).use(unprotectedRouter.allowedMethods())
-    console.log(`Server running on port ${config.port}`)
+    console.log(`Server running on port ${config.apiPort}`)
 
-    return createServer(app.callback()).listen(config.port)
+    return createServer(app.callback()).listen(config.apiPort)
 }
 
-server()
+setupConnection().then(() => {
+    server()
+}).catch(e => {
+    console.log(e)
+    process.exit(1)
+})
