@@ -14,7 +14,7 @@ const variables: IEnvVariables = {
     API_PORT: { default: 3000 },
     JWT_ACCESS_TOKEN_LIFE: { default: '15m' },
     JWT_REFRESH_TOKEN_LIFE: { default: '24h' },
-    DB_NAME: { default: 'mongodb' },
+    DB_NAME: { default: 'apidb' },
     DB_HOST: { default: 'localhost' },
     DB_PORT: {default: 27017},
     REDIS_HOST: {default: 'localhost'},
