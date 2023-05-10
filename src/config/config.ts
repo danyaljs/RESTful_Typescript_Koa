@@ -30,7 +30,8 @@ const config: IConfig = {
         refreshTokenLife: process.env.JWT_REFRESH_TOKEN_LIFE || '24h'
     },
     redis,
-    dbEntitiesPath: [...(isDevelopmentMode || isTestMode ? ['src/entities/**/*.ts'] : ['dist/entities/**/*.js'])],
+    dbEntitiesPath: [...(isDevelopmentMode || isTestMode ? ['src/db/entities/**/*.ts'] : ['dist/db/entities/**/*.js'])],
 }
+
 
 export { config }
