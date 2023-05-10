@@ -27,7 +27,7 @@ export const updateUserSchema = {
     },
 }
 
-export const requestValidationSchema = {
+export const requestValidationSchema : Record<string ,any> = {
     type: 'object',
     properties: {
         _id: { type: 'string' },
