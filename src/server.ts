@@ -7,7 +7,7 @@ import { createServer } from 'http'
 import { staticRouter } from './routes/static'
 import { config } from './config/config'
 import { unprotectedRouter } from './routes/unprotected'
-import { setupConnection } from './providers/connections'
+import { setupConnection } from './db/connections'
 
 export const server = function (): Server {
 
