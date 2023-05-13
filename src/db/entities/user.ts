@@ -1,7 +1,7 @@
 import { omit } from "../../libraries/utils";
 import { bcryptCompareAsync, bcryptHashAsync } from "../../libraries/crypto";
 import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from "typeorm";
-import { UserPublic } from '../../interfaces/user.interface'
+import { IUserPublic } from '../../interfaces/user.interface'
 
 @Entity()
 export class User {
@@ -46,7 +46,7 @@ export class User {
     }
 
 
-    public(): UserPublic {
-        return omit({ id: this._id, ...this }, ['_id', 'password', 'refreshToken'])
+    public(): IUserPublic {
+        return omit({ id: this._id, ...this }, '_id', 'password', 'refreshToken')
     }
 }

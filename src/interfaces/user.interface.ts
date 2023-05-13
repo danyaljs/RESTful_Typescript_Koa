@@ -1,4 +1,4 @@
-export interface UserPublic {
+export interface IUserPublic {
     id?: string
     email?: string
     name?: string
