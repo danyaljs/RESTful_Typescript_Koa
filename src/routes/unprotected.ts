@@ -5,12 +5,12 @@ const unprotectedRouter = new SwaggerRouter()
 
 
 // Auth
-unprotectedRouter.post('/login')
+unprotectedRouter.post('/login', auth.loginUser)
 unprotectedRouter.get('refresh')
 
 
 // User
-unprotectedRouter.post('/users',user.createUser)
+unprotectedRouter.post('/users', user.createUser)
 
 
 
