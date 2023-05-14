@@ -33,7 +33,7 @@ export const verifyToken = function (context: Context, token: string, type: 'acc
     try {
         const secret = type === 'access' ? config.jwt.accessTokenSecret : config.jwt.refreshTokenSecret
         const result = jwt.verify(token, secret, { ignoreExpiration: type === 'access' })
-        
+
         if (typeof result === 'string' || (result.constructor === Object && !result.hasOwnProperty('email')))
             context.throw(new errors.InvalidToken())
 
@@ -41,4 +41,14 @@ export const verifyToken = function (context: Context, token: string, type: 'acc
     } catch (e) {
         context.throw(new errors.RevokedToken())
     }
+}
+
+/**
+ * Verifies if a user's token is valid
+ *
+ * @param  {Context} context Koa Context object for error handling
+ */
+export const verifyUserLoggedIn = function (context: Context) {
+    if (!context.state.user)
+        context.throw(new errors.UserNotLoggedIn())
 }
