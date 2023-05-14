@@ -72,4 +72,24 @@ export default class AuthController {
         })
     }
 
+
+    @request('get', '/logout')
+    @summary('Log a user out')
+    @responses({
+        200: { description: 'user successfully logged out' },
+        400: { description: 'missing fields' },
+        401: { description: 'invalid access token, user not logged in' },
+        404: { description: 'user not found' },
+    })
+    public static async logoutUser(context:Context): Promise<void> {
+        AuthService.verifyUserLoggedIn(context)
+
+        const user = <User> await UserService.findUser(context, { where: { email: context.state.user.email } }, false)
+
+        user.refreshToken = 'removed'
+
+        await UserService.updateUser(context, user)
+
+        response(context, 200)
+    }
 }
