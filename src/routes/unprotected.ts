@@ -6,7 +6,7 @@ const unprotectedRouter = new SwaggerRouter()
 
 // Auth
 unprotectedRouter.post('/login', auth.loginUser)
-unprotectedRouter.get('refresh')
+unprotectedRouter.get('/refresh', auth.refreshToken)
 
 
 // User
