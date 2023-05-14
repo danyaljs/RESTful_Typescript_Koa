@@ -1,4 +1,4 @@
-import { body, Context, request, responses, summary, tagsAll } from "koa-swagger-decorator";
+import { body, Context, description, request, responses, summary, tagsAll } from "koa-swagger-decorator";
 import * as ValidationService from "../services/validate"
 import * as UserService from '../services/user'
 import * as AuthService from '../services/auth'
@@ -6,7 +6,8 @@ import { User } from "../db/entities/user";
 import { IUser } from "../interfaces/user.interface";
 import { pick, response } from "../libraries/utils";
 import { createUserSchema } from "../db/schemas/user";
-
+import jwt from 'jsonwebtoken'
+import { config } from "../config/config";
 
 @tagsAll(['Auth'])
 export default class AuthController {
@@ -39,5 +40,36 @@ export default class AuthController {
         response(context, 200, { token: accessToken })
     }
 
-    
+
+
+    @request('get', '/refresh')
+    @summary('Get the refresh token')
+    @description('The user must already be authorized to used this route to get the refresh token')
+    @responses({
+        200: { description: 'still valid access token, successfully refreshed token' },
+        400: { description: 'missing fields' },
+        403: { description: 'unauthorized, missing/invalid jwt token' },
+        404: { description: 'user not found' },
+    })
+    public static async refreshToken(context: Context): Promise<void> {
+        const token = (context.header?.authorization && context.header.authorization.split(' ')[1]) || ''
+        const decoded = AuthService.verifyToken(context, token, 'access')
+
+        
+        if (!ValidationService.isExpired(decoded.exp))
+            return response(context, 200, {
+                token: jwt.sign(decoded, config.jwt.accessTokenSecret)
+            })
+
+        const user = <User>await UserService.findUser(context, { where: { email: decoded.email } }, false)
+        AuthService.verifyToken(context, user.refreshToken || 'aaaaa', 'refresh')
+        response(context, 200, {
+            token: AuthService.signAccessToken({
+                id: user._id,
+                email: user.email,
+                expiresIn: config.jwt.accessTokenLife,
+            })
+        })
+    }
+
 }
