@@ -22,7 +22,7 @@ export const validateRequest = async (
     const validate = ajv.compile({ ...entitySchema, required })
     const valid = await validate(reqObject)
 
-    
+
     if (!valid && validate.errors && validate.errors.length > 0) {
         context.throw(new errors.RequestValidationErrors('RequestValidationErrors'))
     }
@@ -66,3 +66,11 @@ export const validatePassword = (context: Context, string: string): void => {
     if (!string.match(/(?=.*[^\dA-Za-z])/))
         context.throw(new errors.InvalidUserPassword('MissingSpecialCharacter'))
 }
+
+/**
+ * Checks if a unix timestamp is in the past
+ * 
+ * @param  {number} exp a unix timestamp to check
+ * @returns {boolean} true if unix timestamp is in the past. false otherwise
+ */
+export const isExpired = (exp: number): boolean => Date.now() >= exp * 1000
