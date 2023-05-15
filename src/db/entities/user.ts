@@ -1,13 +1,13 @@
 import { omit } from "../../libraries/utils";
 import { bcryptCompareAsync, bcryptHashAsync } from "../../libraries/crypto";
-import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ObjectId, ObjectIdColumn, UpdateDateColumn } from "typeorm";
 import { IUserPublic } from '../../interfaces/user.interface'
 
 @Entity()
 export class User {
 
     @ObjectIdColumn()
-    _id!: string;
+    _id!: ObjectId;
 
     @Column({ length: 80 })
     name!: string
