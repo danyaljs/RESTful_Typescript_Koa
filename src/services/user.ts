@@ -1,5 +1,6 @@
 
 import { Context } from "koa-swagger-decorator"
+import { ObjectId } from "mongodb"
 import { Repository } from "typeorm"
 import { appDataSource } from "../db/connections"
 import { User } from "../db/entities/user"
@@ -149,4 +150,27 @@ export const findAllUsers = async function (context: Context, qryObj: Record<str
     }
 
     return users.map((user: User): IUserPublic => user.public())
+}
+
+/**
+ * Returns a new User model for saving an updated user
+ * 
+ * @param  {Context} context Koa context object
+ * @returns {User} the created user model
+ */
+export const createUpdateUserModel = function (context: Context): User {
+    const user: User = new User()
+    const body = <IUser>context.request.body;
+    user._id = new ObjectId(context.params.id);
+
+    user.name = body.name
+    user.email = body.email
+    user.password = body.password
+    user.dob = body.dob
+    user.address = body.address
+    user.description = body.description
+
+    delete user.createdAt;
+
+    return user;
 }
