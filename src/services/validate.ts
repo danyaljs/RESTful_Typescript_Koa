@@ -1,9 +1,18 @@
 import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
 import { Context } from "koa-swagger-decorator"
-
+import { ObjectId } from 'mongodb'
 import * as errors from '../libraries/errors'
 
+/**
+ * Validates an object against an ajv schema
+ * 
+ * @param {Context} context Koa context object for error handling
+ * @param {Record<string, any>}reqObject The object to be validated
+ * @param {Record<string, any>} entitySchema The ajv schema to be used
+ * @param {Array<string>} required An array of required object key props e.g. ['id', 'name']
+ * @returns {Promise<void>} array of errors if any. undefined otherwise
+ */
 export const validateRequest = async (
     context: Context,
     reqObject: Record<string, any>,
@@ -14,6 +23,7 @@ export const validateRequest = async (
 
     if (required.includes('password')) validatePassword(context, reqObject.password)
 
+    if (required.includes('_id')) validateMongoId(context)
 
     const ajv = new Ajv()
 
@@ -30,7 +40,14 @@ export const validateRequest = async (
     return
 }
 
-
+/**
+ * returns properties missing from an object if any
+ * 
+ * @param {Context} context Koa context object for error handling
+ * @param {Record<string, any>} objectToValidate the object to validate
+ * @param {Array<string>} required an array of required property names
+ * @returns {Array<string>} an array of strings of the keys of the missing properties
+ */
 export const validateRequiredProperties = (
     context: Context,
     objectToValidate: Record<string, any>,
@@ -46,7 +63,23 @@ export const validateRequiredProperties = (
     return missing
 }
 
+/**
+ * Validates a mongo id. Throws an error if invalid
+ * 
+ * @param {Context} context Koa context Object for error handling
+ */
+export const validateMongoId = (context: Context): void => {
 
+    if (!ObjectId.isValid(context.params.id))
+        context.throw(new errors.InvalidUserID())
+}
+
+/**
+ * Validates a user's passwords against common recommendations. Throws an error if invalid
+ * 
+ * @param  {Context} context Koa context object for error handling
+ * @param  {string} string the password to be validated
+ */
 export const validatePassword = (context: Context, string: string): void => {
     if (string.length < 6)
         context.throw(new errors.InvalidUserPassword('PasswordShorterThan6Characters'))
