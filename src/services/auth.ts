@@ -3,6 +3,8 @@ import { Context } from 'koa-swagger-decorator'
 import { DecodedJwtToken } from '../interfaces/auth.interface'
 import { config } from '../config/config'
 import * as errors from '../libraries/errors'
+import { BlackList } from 'jwt-blacklist'
+import { blacklistConnection } from 'src/db/connections'
 
 /**
  * signs a new jwt refresh token
@@ -51,4 +53,22 @@ export const verifyToken = function (context: Context, token: string, type: 'acc
 export const verifyUserLoggedIn = function (context: Context) {
     if (!context.state.user)
         context.throw(new errors.UserNotLoggedIn())
+}
+
+/**
+ *  Adds a token to the redis token blacklist
+ * 
+ * @param  {Context} context Koa Context object
+ * @returns {Promise<void>} a void promise
+ */
+export const revokeToken = async function (context: Context): Promise<void> {
+    const tokenToRevoke = (context.header?.authorization && context.header.authorization.split('')[1]) || ''
+
+    try {
+        const tokenBlacklist: BlackList = await blacklistConnection();
+
+        await tokenBlacklist.add(tokenToRevoke)
+    } catch (e) {
+        console.log(e)
+    }
 }
