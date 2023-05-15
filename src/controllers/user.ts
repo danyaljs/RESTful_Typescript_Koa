@@ -29,4 +29,9 @@ export default class UserController {
 
 
     }
+
+
+    public static async getUsers(context:Context): Promise<void> {
+        response(context,200,await UserService.findAllUsers(context,{}))
+    }
 }
