@@ -1,9 +1,9 @@
-import { body, Context, request, responses, summary } from "koa-swagger-decorator";
+import { body, Context, path, request, responses, summary } from "koa-swagger-decorator";
 import { response } from "../libraries/utils";
 import { createUserSchema, requestValidationSchema } from "../db/schemas/user";
 import * as UserService from '../services/user'
 import * as ValidationService from '../services/validate'
-import { user } from ".";
+import { ObjectId } from 'mongodb'
 export default class UserController {
 
     @request('post', '/users')
@@ -31,7 +31,31 @@ export default class UserController {
     }
 
 
-    public static async getUsers(context:Context): Promise<void> {
-        response(context,200,await UserService.findAllUsers(context,{}))
+    @request('get', '/users')
+    @summary('Find all users')
+    @responses({
+        200: { description: 'Success' },
+        400: { description: 'Error' },
+        401: { description: 'Token authorization error' },
+        404: { description: 'Users not found' },
+    })
+    public static async getUsers(context: Context): Promise<void> {
+        response(context, 200, await UserService.findAllUsers(context, {}))
+    }
+
+    @request('get', '/users/{id}')
+    @summary('Find user by id')
+    @path({ id: { type: 'string', required: true, description: 'id of user to fetch' } })
+    @responses({
+        200: { description: 'success' },
+        400: { description: 'validation error, user not found' },
+        401: { description: 'token authorization error' },
+    })
+    public static async getUser(context: Context): Promise<void> {
+        await ValidationService.validateRequest(context, { _id: context.params.id }, requestValidationSchema, [
+            '_id',
+        ])
+        
+        response(context, 200, await UserService.findUser(context, { _id: new ObjectId(context.params.id) }))
     }
 }
