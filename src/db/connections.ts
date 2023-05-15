@@ -1,5 +1,6 @@
 import { config } from "../config/config";
 import { DataSource } from "typeorm";
+import { BlackList, createBlackList, STORE_TYPE } from "jwt-blacklist";
 
 let appDataSource: DataSource;
 export async function setupConnection(drop: boolean = false): Promise<DataSource> {
@@ -18,5 +19,16 @@ export async function setupConnection(drop: boolean = false): Promise<DataSource
     return appDataSource.initialize()
 }
 
-
-export {appDataSource}
+export async function blacklistConnection(): Promise<BlackList> {
+    return createBlackList({
+        daySize: 10000,
+        errorRate: 0.001,
+        storeType: STORE_TYPE.REDIS,
+        redisOptions: {
+            host: config.redis.host,
+            port: config.redis.port,
+            key: config.redis.blackListKeyName,
+        },
+    })
+}
+export { appDataSource }

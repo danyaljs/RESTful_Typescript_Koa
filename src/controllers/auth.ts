@@ -55,7 +55,7 @@ export default class AuthController {
         const token = (context.header?.authorization && context.header.authorization.split(' ')[1]) || ''
         const decoded = AuthService.verifyToken(context, token, 'access')
 
-        
+
         if (!ValidationService.isExpired(decoded.exp))
             return response(context, 200, {
                 token: jwt.sign(decoded, config.jwt.accessTokenSecret)
@@ -81,12 +81,15 @@ export default class AuthController {
         401: { description: 'invalid access token, user not logged in' },
         404: { description: 'user not found' },
     })
-    public static async logoutUser(context:Context): Promise<void> {
+    public static async logoutUser(context: Context): Promise<void> {
         AuthService.verifyUserLoggedIn(context)
 
-        const user = <User> await UserService.findUser(context, { where: { email: context.state.user.email } }, false)
+        const user = <User>await UserService.findUser(context, { where: { email: context.state.user.email } }, false)
 
         user.refreshToken = 'removed'
+
+
+        if (config.redis.blackListEnabled) await AuthService.revokeToken(context)
 
         await UserService.updateUser(context, user)
 
