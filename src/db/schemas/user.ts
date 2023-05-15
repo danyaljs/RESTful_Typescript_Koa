@@ -27,15 +27,15 @@ export const updateUserSchema = {
     },
 }
 
-export const requestValidationSchema : Record<string ,any> = {
+export const requestValidationSchema: Record<string, any> = {
     type: 'object',
     properties: {
         _id: { type: 'string' },
         id: { type: 'string' },
-        name: { type: 'string', minLength: 2, maxLength: 80},
-        email: { type: 'string', format: 'email'},
-        dob: { type: 'string', format: 'date'},
-        password: { type: 'string'},
+        name: { type: 'string', minLength: 2, maxLength: 80 },
+        email: { type: 'string', format: 'email' },
+        dob: { type: 'string', format: 'date' },
+        password: { type: 'string' },
         following: { type: 'array' },
         address: {
             type: 'string',
