@@ -8,6 +8,6 @@ protectedRouter.get('/logout', auth.logoutUser)
 
 // USER ROUTES
 protectedRouter.get('/users',user.getUsers)
-
+protectedRouter.get('/users/:id', user.getUser)
 
 export { protectedRouter }
