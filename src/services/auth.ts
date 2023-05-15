@@ -5,6 +5,7 @@ import { config } from '../config/config'
 import * as errors from '../libraries/errors'
 import { BlackList } from 'jwt-blacklist'
 import { blacklistConnection } from '../db/connections'
+import { User } from '../db/entities/user'
 
 /**
  * signs a new jwt refresh token
@@ -71,4 +72,8 @@ export const revokeToken = async function (context: Context): Promise<void> {
     } catch (e) {
         console.log(e)
     }
+}
+
+export const verifyTokenEmail = async function (context: Context,user:User): Promise<void> {
+    if (context.state?.user?.email !== user.email) context.throw(new errors.UserPermissionDenied())
 }
