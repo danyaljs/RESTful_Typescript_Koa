@@ -129,3 +129,24 @@ export const updateUser = async function (context: Context, user: User): Promise
         context.throw(new errors.InternalServerError())
     }
 }
+
+/**
+ * Fetches all users in the user collection
+ * 
+ * @param  {Context} context Koa context object
+ * @param  {Record<string, any>} qryObj a database query object
+ * @returns {Promise<Array<UserPublic>>} a promise with array of fetched users
+ */
+export const findAllUsers = async function (context: Context, qryObj: Record<string, any>): Promise<Array<IUserPublic>> {
+    const userRepository = appDataSource.getRepository(User)
+
+    let users = []
+
+    try {
+        users = await userRepository.find(qryObj)
+    } catch (e) {
+        context.throw(new errors.InternalServerError())
+    }
+
+    return users.map((user: User): IUserPublic => user.public())
+}

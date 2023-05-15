@@ -4,7 +4,7 @@ import { DecodedJwtToken } from '../interfaces/auth.interface'
 import { config } from '../config/config'
 import * as errors from '../libraries/errors'
 import { BlackList } from 'jwt-blacklist'
-import { blacklistConnection } from 'src/db/connections'
+import { blacklistConnection } from '../db/connections'
 
 /**
  * signs a new jwt refresh token
