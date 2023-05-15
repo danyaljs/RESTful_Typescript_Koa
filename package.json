@@ -19,6 +19,7 @@
     "bcryptjs": "^2.4.3",
     "find-root": "^1.1.0",
     "jsonwebtoken": "^9.0.0",
+    "jwt-blacklist": "^0.1.2",
     "koa": "^2.14.2",
     "koa-bodyparser": "^4.4.0",
     "koa-helmet": "^7.0.2",
